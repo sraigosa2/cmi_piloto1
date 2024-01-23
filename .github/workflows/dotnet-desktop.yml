@@ -1,0 +1,31 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1'
+
+    - name: Build Solution
+      run: |
+        dotnet restore Ws_OLS_FEL.sln
+        dotnet build Ws_OLS_FEL.sln --configuration Release
+
+    - name: Run Tests
+      run: |
+        dotnet test Ws_OLS_FEL.sln --configuration Release
+
+    - name: Deploy (Replace this with your actual deployment steps)
+      run: echo "Deployment steps go here"
