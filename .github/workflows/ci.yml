@@ -12,21 +12,21 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
       
-    - name: Set up .NET Framework
-      run: |
-        choco install dotnetfx --version=4.5.0 -y
-        
-    - name: Restore NuGet packages
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+      
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.1
+    
+    - name: Restore Packages
       run: nuget restore Ws_OLS_FEL.sln
-
-    - name: Build Solution
-      run: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=Release /p:Platform="Any CPU" Ws_OLS_FEL.sln
-
-    - name: Run Tests
-      run: |
-        dotnet test Ws_OLS_FEL.sln --configuration Release
+    
+    - name: Build solution
+      run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
 
     - name: Cache SonarQube packages
       uses: actions/cache@v1
