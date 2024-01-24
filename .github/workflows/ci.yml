@@ -13,14 +13,11 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
       
-    - name: Restore NuGet packages
-      run: dotnet restore Ws_OLS_FEL.sln
-      
-    - name: Set up .NET
+    - name: Set up .NET Framework
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1'
-
+        dotnet-version: '4.x'  # Utiliza la versión específica de .NET Framework que necesitas
+      
     - name: Build Solution
       run: |
         dotnet restore Ws_OLS_FEL.sln
