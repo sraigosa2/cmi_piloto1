@@ -15,8 +15,7 @@ jobs:
       
     - name: Set up .NET Framework
       run: |
-        choco install dotnetfx --version=4.8.0 -y
-        refreshenv
+        choco install dotnetfx --version=4.5.0 -y
         
     - name: Build Solution
       run: |
