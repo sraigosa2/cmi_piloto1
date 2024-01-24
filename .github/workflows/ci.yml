@@ -14,10 +14,10 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Set up .NET Framework
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '4.x'  # Utiliza la versión específica de .NET Framework que necesitas
-      
+      run: |
+        choco install dotnetfx --version=4.8.0 -y
+        refreshenv
+        
     - name: Build Solution
       run: |
         dotnet restore Ws_OLS_FEL.sln
