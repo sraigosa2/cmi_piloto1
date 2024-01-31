@@ -109,7 +109,7 @@ jobs:
           # on the project dashboard in SonarCloud.
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /n:"${{ env.PROJECT_NAME }}" /k:"${{ env.PROJECT_KEY }}" /o:"sonarsource" /d:sonar.token="${{ env.SONAR_TOKEN }}" /d:sonar.host.url="${{ env.SONAR_URL }}"
-          dotnet build ServBoHExtInventarioTrasladoSS.sln
+          dotnet build WS_OLS_FEL.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
 
   CodeQL:
