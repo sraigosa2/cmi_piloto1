@@ -21,11 +21,15 @@ jobs:
     runs-on: windows-2019
     
     steps:
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
-      
+    
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
     - name: setup-msbuild
       uses: microsoft/setup-msbuild@v1.1
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
     
     - name: Restore Packages
       run: nuget restore Ws_OLS_FEL.sln
