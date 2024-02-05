@@ -46,6 +46,7 @@ jobs:
         uses: NuGet/setup-nuget@v1.0.5
       
       - name: Install dependencies
+        working-directory: ${{ github.workspace }}
         run: |
           dotnet restore
           
