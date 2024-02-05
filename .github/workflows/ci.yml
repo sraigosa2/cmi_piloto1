@@ -40,26 +40,30 @@ jobs:
   test:
     needs: build
     runs-on: windows-2019
-    name: test
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-        
+
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1.1
+
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
       
       - name: Restore Packages
         run: nuget restore Ws_OLS_FEL.sln
-          
-      - name: test dotnet
-        working-directory: ${{ github.workspace }}
-        run: dotnet test Ws_OLS_FEL.sln --logger trx --results-directory "TestResults"
-        
+
+      - name: Test solution
+        run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
+
+      - name: Run dotnet test
+        run: dotnet test --logger trx --results-directory "TestResults"
+
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v4
         with:
-          name: dotnet-results-${{ env.DOTNET_VERSION }}
-          path: TestResults-${{ env.DOTNET_VERSION }}
+          name: dotnet-results
+          path: TestResults
         if: ${{ always() }}
 
   sonarcloud:
