@@ -42,7 +42,7 @@ jobs:
       with:
         name: dist-files
         path: |
-          Ws_OLS_FEL/bin
+          Ws_OLS/bin
   test:
     needs: build
     runs-on: windows-2019
