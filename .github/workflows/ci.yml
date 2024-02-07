@@ -144,6 +144,7 @@ jobs:
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@v4
         with:
+          base_ref: 'main'
           fail-on-severity: 'high'
           deny-licenses: LGPL-2.0, BSD-2-Clause
 #          allow_licenses: Apache-2.0, BSD-3-Clause, MIT
