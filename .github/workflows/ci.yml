@@ -36,7 +36,13 @@ jobs:
     
     - name: Build solution
       run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
-      
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist-files
+        path: |
+          Ws_OLS_FEL/bin
   test:
     needs: build
     runs-on: windows-2019
@@ -142,15 +148,18 @@ jobs:
           deny-licenses: LGPL-2.0, BSD-2-Clause
 #          allow_licenses: Apache-2.0, BSD-3-Clause, MIT
 
-  deploy:
+  artifact:
     needs: test
     runs-on: windows-latest
     name: deploy
     steps:
-      - name: Get build artifacts
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+        
+      - name: Get files
         uses: actions/download-artifact@v4
         with:
-          name: dist-files
-      - name: Output contents
+          name: dist-sln
+      - name: Output
         shell: powershell
         run: Get-ChildItem -Path .\
