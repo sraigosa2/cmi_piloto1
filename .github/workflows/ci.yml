@@ -40,7 +40,7 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: dist-files
+        name: files
         path: |
           Ws_OLS_FEL/bin
   test:
@@ -159,7 +159,7 @@ jobs:
       - name: Get files
         uses: actions/download-artifact@v4
         with:
-          name: dist-sln
+          name: files
       - name: Output
         shell: powershell
         run: Get-ChildItem -Path .\
