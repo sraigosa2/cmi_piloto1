@@ -36,11 +36,11 @@ jobs:
     
     - name: Build solution
       run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
-    
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.1
       with:
-        name: files
+        name: dist-files
         path: |
           Ws_OLS_FEL/bin
   test:
@@ -156,10 +156,10 @@ jobs:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
         
-      - name: Get files
-        uses: actions/download-artifact@v4
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v4.1.2
         with:
-          name: files
+          name: dist-files
       - name: Output
         shell: powershell
         run: Get-ChildItem -Path .\
