@@ -11,8 +11,8 @@ on:
       - reopened
 env:
   DOTNET_VERSION: '6.0.402' # The .NET SDK version to use
-  PROJECT_NAME: CMI.WS_OLS_FEL
-  PROJECT_KEY: CMI.WS_OLS_FEL
+  PROJECT_NAME: santi995_cmi-alimentos-ws-ols-fel
+  PROJECT_KEY: santi995_cmi-alimentos-ws-ols-fel
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   SONAR_URL: https://sonarcloud.io/
   
@@ -127,7 +127,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /n:"${{ env.PROJECT_NAME }}" /k:"${{ env.PROJECT_KEY }}" /o:"sonarsource" /d:sonar.token="${{ env.SONAR_TOKEN }}" /d:sonar.host.url="${{ env.SONAR_URL }}"
+          .\.sonar\scanner\dotnet-sonarscanner begin /n:"${{ env.PROJECT_NAME }}" /k:"${{ env.PROJECT_KEY }}" /o:"santi995" /d:sonar.token="${{ env.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           msbuild WS_OLS_FEL.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
 
