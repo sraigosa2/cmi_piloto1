@@ -14,7 +14,7 @@ env:
   PROJECT_NAME: CMI.WS_OLS_FEL
   PROJECT_KEY: CMI.WS_OLS_FEL
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  SONAR_URL: https://codequality.softwareone.com/
+  SONAR_URL: https://sonarcloud.io/
   
 jobs:
   build:
