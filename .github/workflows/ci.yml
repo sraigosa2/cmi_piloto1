@@ -148,7 +148,7 @@ jobs:
 
   artifact:
     needs: test
-    runs-on: windows-latest
+    runs-on: self-hosted
     name: deploy
     steps:
       - name: 'Checkout Repository'
