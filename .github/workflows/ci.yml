@@ -145,7 +145,7 @@ jobs:
           fail-on-severity: 'high'
           deny-licenses: LGPL-2.0, BSD-2-Clause
 #          allow_licenses: Apache-2.0, BSD-3-Clause, MIT
-
+ 
   artifact:
     needs: test
     runs-on: self-hosted
