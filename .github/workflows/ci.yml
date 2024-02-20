@@ -139,6 +139,9 @@ jobs:
     permissions:
       contents: read
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@v4
         with:
