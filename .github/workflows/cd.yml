@@ -1,0 +1,87 @@
+name: cd
+
+on: 
+  push:
+    branches:
+      - release
+env:
+  DOTNET_VERSION: '6.0.402' # The .NET SDK version to use
+
+jobs:
+  build:
+    # runs-on: self-hosted-cmi
+    runs-on: windows-latest
+    name: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
+      - name: Install dependencies
+        run: |
+          dotnet restore
+      - name: Build
+        run: dotnet build ServBoHExtInventarioTrasladoSS.sln --configuration Release --no-restore
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: |
+            ServBoHExtInventarioTrasladoSS/bin/Release/net6.0
+
+  DeployTest:
+    environment: testing
+    env:
+      IP_DEPLOY: ${{secrets.IP_DEPLOY}}
+      USERNAME_DEPLOY: ${{secrets.USERNAME_DEPLOY}}
+      PASSWORD_DEPLOY: ${{secrets.PASSWORD_DEPLOY}}
+      BASE: ${{vars.BASE}}
+      DIRECTORYDESTINY: ${{vars.DIRECTORYDESTINY}}
+    needs: build
+    runs-on: self-hosted-cmi
+    name: deploytest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files
+          path: dist-files
+      - name: Output contents
+        shell: powershell
+        run: |
+          $ORIGIN = "dist-files"
+          ./updateconfig.ps1 "$($ORIGIN)/ServBoHExtInventarioTrasladoSS.dll.config" ${{vars.URLAPICOLAS}} ${{vars.APICONEXIONDB}} ${{vars.NOMBRESERVICIO}} ${{vars.SERVICIODESTINO}} ${{vars.CONEXIONDB}} ${{vars.CONEXIONDB2}} ${{vars.CORREO}} ${{vars.IDMENU}} ${{vars.AMBIENTE}} ${{vars.DIRECTORIOBITACORAERRORES}}
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} 
+    
+  DeployProd:
+    environment: production
+    env:
+      IP_DEPLOY: ${{secrets.IP_DEPLOY}}
+      USERNAME_DEPLOY: ${{secrets.USERNAME_DEPLOY}}
+      PASSWORD_DEPLOY: ${{secrets.PASSWORD_DEPLOY}}
+      BASE: ${{vars.BASE}}
+      DIRECTORYDESTINY: ${{vars.DIRECTORYDESTINY}}
+    needs: DeployTest
+    runs-on: self-hosted-cmi
+    name: deployprod
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files
+          path: dist-files
+      - name: Output contents
+        shell: powershell
+        run: |
+          $ORIGIN = "dist-files"
+          ./updateconfig.ps1 "$($ORIGIN)/ServBoHExtInventarioTrasladoSS.dll.config" ${{vars.URLAPICOLAS}} ${{vars.APICONEXIONDB}} ${{vars.NOMBRESERVICIO}} ${{vars.SERVICIODESTINO}} ${{vars.CONEXIONDB}} ${{vars.CONEXIONDB2}} ${{vars.CORREO}} ${{vars.IDMENU}} ${{vars.AMBIENTE}} ${{vars.DIRECTORIOBITACORAERRORES}}
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }}  
