@@ -4,37 +4,27 @@ on:
   push:
     branches:
       - release
-env:
-  DOTNET_VERSION: '6.0.402' # The .NET SDK version to use
 
 jobs:
   build:
     # runs-on: self-hosted-cmi
-    runs-on: windows-latest
+    runs-on: windows-2019
     name: build
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget
-      - name: Install dependencies
-        run: |
-          dotnet restore
-      - name: Build
-        run: dotnet build ServBoHExtInventarioTrasladoSS.sln --configuration Release --no-restore
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-files
-          path: |
-            ServBoHExtInventarioTrasladoSS/bin/Release/net6.0
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+    
+    - name: Restore Packages
+      run: nuget restore Ws_OLS_FEL.sln
+    
+    - name: Build solution
+      run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
 
   DeployTest:
     environment: testing
