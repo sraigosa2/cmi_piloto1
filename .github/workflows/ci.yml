@@ -10,7 +10,6 @@ on:
       - synchronize
       - reopened
 env:
-  DOTNET_VERSION: '6.0.402' # The .NET SDK version to use
   PROJECT_NAME: santi995_cmi-alimentos-ws-ols-fel
   PROJECT_KEY: santi995_cmi-alimentos-ws-ols-fel
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
