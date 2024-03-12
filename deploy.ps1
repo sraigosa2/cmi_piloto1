@@ -4,6 +4,8 @@ $USERNAME_DEPLOY = $args[2]
 $PASSWORD_DEPLOY = $args[3]
 $BASE = $args[4]
 $DIRECTORYDESTINY = $args[5]
+$SiteName = $args[6]
+$AppPoolName = $args[7]
 
 write-host "There are a total of $($args.count) arguments"
 
@@ -28,63 +30,61 @@ Write-Output "User:" + $User
 $PWord = ConvertTo-SecureString -String $PASSWORD_DEPLOY -AsPlainText -Force
 $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $User, $PWord
 $Session = New-PSSession -ComputerName $IP_DEPLOY -Credential $Credential
-$ConfirmPreference = 'None'
-$ServiceDescription = "Servicio web Ws_OLS_FEL"
-# $Origin = $WORKSPACE
-#$DirectoryDestiny = $DIRECTORYDESTINY
-$Destination = "$($BASE)\$($DIRECTORYDESTINY)\"
+
+
+$Destination = "($DIRECTORYDESTINY)"
+$OriginPath = Join-Path -Path $BASE -ChildPath $Origin
 Write-Output "Destination:" + $Destination
-$ServicePath = "$($Destination)$($Origin)\ServBoHExtInventarioTrasladoSS.exe"
-Write-Output "ServicePath:" + $ServicePath
-$ServiceName = "Service_$($Destination)".Replace("\","_").Replace(":","").TrimEnd("_")
 
 Test-NetConnection $IP_DEPLOY -Port 5985
 
-# Invoke-Command -Session $Session -ScriptBlock {
-#     Get-Culture
-# }
+# Verificar que la carpeta de origen exista
+if (!(Test-Path $OriginPath -PathType Container)) {
+    Write-Host "La carpeta de origen '$OriginPath' no existe."
+    exit
+}
+
+# Obtener el contenido de la carpeta local Ws_OLS
+$resultQueryOrigin = Get-ChildItem -Path $OriginPath -ErrorAction SilentlyContinue
+
+Write-Output $resultQueryOrigin
 
 
+
+# Detener el sitio web en el servidor remoto
+Invoke-Command -Session $Session -ScriptBlock {
+    param($SiteName)
+    Import-Module WebAdministration
+    Stop-Website -Name $SiteName
+} -ArgumentList $AppPoolName
+
+# Verificar la existencia de la carpeta de destino en el servidor remoto
 $resultQueryDestiny = Invoke-Command -Session $Session -ScriptBlock {
-     param($Destination)
-     Get-ChildItem -Path $Destination -ErrorAction SilentlyContinue
+    param($Destination)
+    Get-ChildItem -Path $Destination -ErrorAction SilentlyContinue
 } -ArgumentList $Destination
 
-Write-Output $resultQueryDestiny
-
-if(!($resultQueryDestiny)){
-    Invoke-Command -Session $Session -ScriptBlock {
-        param($BASE, $DIRECTORYDESTINY)
-        New-Item -Path $BASE -Name $DIRECTORYDESTINY -ItemType "directory" -ErrorAction SilentlyContinue
-    } -ArgumentList $BASE, $DIRECTORYDESTINY
+if ($resultQueryDestiny -eq $null) {
+    Write-Host "La carpeta de destino '$Destination' no existe en el servidor remoto."
 }
 
-$service = Invoke-Command -Session $Session -ScriptBlock {
-    param($ServiceName)
-    Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-}-ArgumentList $ServiceName
+# Eliminar todos los archivos y carpetas dentro del destino, excluyendo 'aspnet_client'
+Invoke-Command -Session $Session -ScriptBlock {
+    param($Destination)
+    Get-ChildItem -Path $Destination | Where-Object { $_.Name -ne 'aspnet_client' } | Remove-Item -Recurse -Force
 
-Write-Output $service.Status
+    # Crear la carpeta de destino nuevamente si es necesario
+    if (!(Test-Path $Destination)) {
+        New-Item -Path $Destination -ItemType Directory -Force
+    }
+} -ArgumentList $Destination
 
-if(!($service))
-{
-    Write-Output "No hay servicio"
-    Copy-Item $Origin -Destination $Destination -ToSession $Session -Recurse -Force
-    Invoke-Command -Session $Session -ScriptBlock {
-        param($ServiceName,$ServicePath,$ServiceDescription)
-        New-Service -Name $ServiceName -BinaryPathName $ServicePath -Description $ServiceDescription
-        Set-Service -Name $ServiceName -StartupType Automatic
-    }-ArgumentList $ServiceName,$ServicePath,$ServiceDescription
-}
-else
-{
-    if (!($service.Started))
-    {
-        Write-Output "Servicio Existe"
-        Invoke-Command -Session $Session -ScriptBlock {
-            param($ServiceName)
-            Stop-Service -Name $ServiceName
-        }-ArgumentList $ServiceName
-        Copy-Item $Origin -Destination $Destination -ToSession $Session -Recurse -Force
-    } 
-}
+# Copiar el contenido de la carpeta local Ws_OLS en el servidor remoto
+Copy-Item -Path "$OriginPath\*" -Destination $Destination -ToSession $Session -Recurse -Force
+
+# Iniciar el sitio web en el servidor remoto
+Invoke-Command -Session $Session -ScriptBlock {
+    param($SiteName)
+    Import-Module WebAdministration
+    Start-Website -Name $SiteName
+} -ArgumentList $SiteName

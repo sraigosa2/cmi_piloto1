@@ -35,8 +35,10 @@ jobs:
       PASSWORD_DEPLOY: ${{secrets.PASSWORD_DEPLOY}}
       BASE: ${{vars.BASE}}
       DIRECTORYDESTINY: ${{vars.DIRECTORYDESTINY}}
+      SITENAME: ${{vars.SITENAME}}
+      APPPOOLNAME: ${{vars.APPPOOLNAME}}
     needs: build
-    runs-on: self-hosted-cmi
+    runs-on: windows-2019
     name: deploytest
     steps:
       - uses: actions/checkout@v4
@@ -49,19 +51,21 @@ jobs:
         shell: powershell
         run: |
           $ORIGIN = "dist-files"
-          ./updateconfig.ps1 "$($ORIGIN)/ServBoHExtInventarioTrasladoSS.dll.config" ${{vars.URLAPICOLAS}} ${{vars.APICONEXIONDB}} ${{vars.NOMBRESERVICIO}} ${{vars.SERVICIODESTINO}} ${{vars.CONEXIONDB}} ${{vars.CONEXIONDB2}} ${{vars.CORREO}} ${{vars.IDMENU}} ${{vars.AMBIENTE}} ${{vars.DIRECTORIOBITACORAERRORES}}
-          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} 
-    
+          ./updateconfig.ps1 "$($ORIGIN)/web.config" ${{vars.TOKEN}} ${{vars.ENVIOJSON}} ${{vars.ENVIOJSONANULACION}} ${{vars.REVISALINEA}} ${{vars.INFOFACTURA}} ${{env.USUARIO} ${{env.PASSWORDHEAD}} ${{env.USERNAME}} ${{env.PASSWORD}} ${{vars.IDCOMPANY}} ${{vars.AMBIENTE}} ${{env.IPES}} ${{env.IPES_SALA}}
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} ${{ env.SITENAME }} ${{ env.APPPOOLNAME }} 
+  
   DeployProd:
-    environment: production
+    environment: prod
     env:
       IP_DEPLOY: ${{secrets.IP_DEPLOY}}
       USERNAME_DEPLOY: ${{secrets.USERNAME_DEPLOY}}
       PASSWORD_DEPLOY: ${{secrets.PASSWORD_DEPLOY}}
       BASE: ${{vars.BASE}}
       DIRECTORYDESTINY: ${{vars.DIRECTORYDESTINY}}
+      SITENAME: ${{vars.SITENAME}}
+      APPPOOLNAME: ${{vars.APPPOOLNAME}}
     needs: DeployTest
-    runs-on: self-hosted-cmi
+    runs-on: windows-2019
     name: deployprod
     steps:
       - uses: actions/checkout@v4
@@ -74,5 +78,5 @@ jobs:
         shell: powershell
         run: |
           $ORIGIN = "dist-files"
-          ./updateconfig.ps1 "$($ORIGIN)/ServBoHExtInventarioTrasladoSS.dll.config" ${{vars.URLAPICOLAS}} ${{vars.APICONEXIONDB}} ${{vars.NOMBRESERVICIO}} ${{vars.SERVICIODESTINO}} ${{vars.CONEXIONDB}} ${{vars.CONEXIONDB2}} ${{vars.CORREO}} ${{vars.IDMENU}} ${{vars.AMBIENTE}} ${{vars.DIRECTORIOBITACORAERRORES}}
-          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }}  
+          ./updateconfig.ps1 "$($ORIGIN)/web.config" ${{vars.TOKEN}} ${{vars.ENVIOJSON}} ${{vars.ENVIOJSONANULACION}} ${{vars.REVISALINEA}} ${{vars.INFOFACTURA}} ${{env.USUARIO} ${{env.PASSWORDHEAD}} ${{env.USERNAME}} ${{env.PASSWORD}} ${{vars.IDCOMPANY}} ${{vars.AMBIENTE}} ${{env.IPES}} ${{env.IPES_SALA}}
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} ${{ env.SITENAME }} ${{ env.APPPOOLNAME }}   
