@@ -26,6 +26,13 @@ jobs:
     - name: Build solution
       run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
 
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        name: dist-files
+        path: |
+          Ws_OLS
+
   DeployTest:
     environment: testing
     env:
