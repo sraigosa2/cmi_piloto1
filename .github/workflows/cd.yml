@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-    # runs-on: self-hosted-cmi
     runs-on: windows-2019
     name: build
     steps:
