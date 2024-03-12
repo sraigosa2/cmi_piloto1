@@ -20,21 +20,27 @@ jobs:
     runs-on: windows-2019
     
     steps:
-    
-    - name: Checkout Repository
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: setup-msbuild
-      uses: microsoft/setup-msbuild@v1.1
+    - name: Setup .NET Framework
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '4.5.x'
 
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
-    
-    - name: Restore Packages
-      run: nuget restore Ws_OLS_FEL.sln
-    
+    - name: Cache NuGet packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget
+
+    - name: Restore dependencies
+      run: dotnet restore Ws_OLS_FEL.sln
+
     - name: Build solution
-      run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
+      run: dotnet build Ws_OLS_FEL.sln --configuration Release --no-restore
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
