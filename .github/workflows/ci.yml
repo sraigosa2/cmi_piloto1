@@ -41,7 +41,7 @@ jobs:
       with:
         name: dist-files
         path: |
-          Ws_OLS/bin
+          Ws_OLS
   test:
     needs: build
     runs-on: windows-2019
@@ -132,7 +132,7 @@ jobs:
 
 
   Dependency_Review:
-    runs-on: windows-latest
+    runs-on: windows-2019
     needs: sonarcloud
     name: Dependency_Review
     permissions:
@@ -150,7 +150,7 @@ jobs:
  
   artifact:
     needs: test
-    runs-on: self-hosted
+    runs-on: windows-2019
     name: deploy
     steps:
       - name: 'Checkout Repository'
