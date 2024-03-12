@@ -39,17 +39,15 @@ Write-Output "Destination:" + $Destination
 Test-NetConnection $IP_DEPLOY -Port 5985
 
 # Verificar que la carpeta de origen exista
-if (!(Test-Path $OriginPath -PathType Container)) {
-    Write-Host "La carpeta de origen '$OriginPath' no existe."
+if (!(Test-Path $Origin -PathType Container)) {
+    Write-Host "La carpeta de origen '$Origin' no existe."
     exit
 }
 
 # Obtener el contenido de la carpeta local Ws_OLS
-$resultQueryOrigin = Get-ChildItem -Path $OriginPath -ErrorAction SilentlyContinue
+$resultQueryOrigin = Get-ChildItem -Path $Origin -ErrorAction SilentlyContinue
 
 Write-Output $resultQueryOrigin
-
-
 
 # Detener el sitio web en el servidor remoto
 Invoke-Command -Session $Session -ScriptBlock {
@@ -57,7 +55,7 @@ Invoke-Command -Session $Session -ScriptBlock {
     Import-Module WebAdministration
     Stop-Website -Name $SiteName
 } -ArgumentList $AppPoolName
-
+Write-Host "Sitio detenido..."
 # Verificar la existencia de la carpeta de destino en el servidor remoto
 $resultQueryDestiny = Invoke-Command -Session $Session -ScriptBlock {
     param($Destination)
@@ -78,13 +76,14 @@ Invoke-Command -Session $Session -ScriptBlock {
         New-Item -Path $Destination -ItemType Directory -Force
     }
 } -ArgumentList $Destination
-
+Write-Host "Eliminados archivos anteriores"
 # Copiar el contenido de la carpeta local Ws_OLS en el servidor remoto
-Copy-Item -Path "$OriginPath\*" -Destination $Destination -ToSession $Session -Recurse -Force
-
+Copy-Item -Path "$Origin\*" -Destination $Destination -ToSession $Session -Recurse -Force
+Write-Host "Se copian archivos a ruta destino"
 # Iniciar el sitio web en el servidor remoto
 Invoke-Command -Session $Session -ScriptBlock {
     param($SiteName)
     Import-Module WebAdministration
     Start-Website -Name $SiteName
 } -ArgumentList $SiteName
+Write-Host "Se inicia el IIS"
