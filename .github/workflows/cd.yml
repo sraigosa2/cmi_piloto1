@@ -5,7 +5,7 @@ on:
     branches:
       - release
       - develop
-
+      
 jobs:
   build:
     runs-on: windows-2019
