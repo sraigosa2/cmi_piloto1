@@ -23,14 +23,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.0.0
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.1
 
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+    
     - name: Restore Packages
       run: nuget restore Ws_OLS_FEL.sln
     
     - name: Build solution
-      run: msbuild Ws_OLS_FEL.sln -t:rebuild -verbosity:diag -property:Configuration=Release
+      run:  msbuild Ws_OLS_FEL.sln -t:rebuild -verbosity:diag -property:Configuration=Release
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
