@@ -52,7 +52,7 @@ Write-Output $resultQueryOrigin
 $prueba = Invoke-Command -Session $Session -ScriptBlock {
     param($AppPoolName)
     Import-Module WebAdministration
-    Stop-Website -Name $AppPoolName
+    Stop-Website -Name "$AppPoolName"
 } -ArgumentList $AppPoolName
 
 Write-Host "Sitio detenido..."
@@ -85,7 +85,7 @@ Write-Host "Se copian archivos a ruta destino"
 Invoke-Command -Session $Session -ScriptBlock {
     param($AppPoolName)
     Import-Module WebAdministration
-    Start-Website -Name $AppPoolName
+    Start-Website -Name "$AppPoolName"
 } -ArgumentList $AppPoolName
 
 Write-Host "Se inicia el IIS"
