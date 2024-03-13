@@ -1,6 +1,5 @@
 name: ci
-
-on:
+'on':
   push:
     branches:
       - develop
@@ -10,31 +9,26 @@ on:
       - synchronize
       - reopened
 env:
-  PROJECT_NAME: ${{secrets.PROJECT_NAME}}
-  PROJECT_KEY: ${{secrets.PROJECT_KEY}}
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  SONAR_URL: ${{secrets.SONAR_HOST_URL}}
-
+  PROJECT_NAME: '${{secrets.PROJECT_NAME}}'
+  PROJECT_KEY: '${{secrets.PROJECT_KEY}}'
+  SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
+  SONAR_URL: '${{secrets.SONAR_HOST_URL}}'
 jobs:
   build:
     runs-on: windows-2019
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.1
-
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
-
       - name: Restore Packages
         run: nuget restore Ws_OLS_FEL.sln
-
       - name: Build solution
-        run: msbuild Ws_OLS_FEL.sln -t:rebuild -verbosity:diag -property:Configuration=Release
-
+        run: >-
+          msbuild Ws_OLS_FEL.sln -t:rebuild -verbosity:diag
+          -property:Configuration=Release
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.3.1
         with:
@@ -47,29 +41,22 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.1
-
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
-
       - name: Restore Packages
         run: nuget restore Ws_OLS_FEL.sln
-
       - name: Test solution
-        run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
-
+        run: 'msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release'
       - name: Run dotnet test
         run: dotnet test --logger trx --results-directory "TestResults"
-
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v4
         with:
           name: dotnet-results
           path: TestResults
-        if: ${{ always() }}
-
+        if: '${{ always() }}'
   sonarcloud:
     needs: test
     runs-on: windows-2019
@@ -78,57 +65,54 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.1
-
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
-
       - name: Restore Packages
         run: nuget restore Ws_OLS_FEL.sln
-
       - name: Cache SonarCloud workspace
         uses: actions/cache@v4
         with:
           path: ~\.sonar\cache
-          key: ${{ runner.os }}-sonar-cache
-          restore-keys: ${{ runner.os }}-sonar-cache
-
+          key: '${{ runner.os }}-sonar-cache'
+          restore-keys: '${{ runner.os }}-sonar-cache'
       - name: Change Version of Java to JDK17
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin" # See 'Supported distributions' for available options
-          java-version: "17"
-
+          distribution: temurin
+          java-version: '17'
       - name: Version jdk current after change
         shell: cmd
         run: java -version
-
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v3
         with:
           path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-
+          key: '${{ runner.os }}-sonar-scanner'
+          restore-keys: '${{ runner.os }}-sonar-scanner'
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
-        run: |
+        run: >
           New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner --version 6.0.0
 
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          --version 6.0.0
       - name: Scanner with SonarCloud
         shell: powershell
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /n:"${{ env.PROJECT_NAME }}" /k:"${{ env.PROJECT_KEY }}" /o:"santi995" /d:sonar.token="${{ env.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          msbuild WS_OLS_FEL.sln
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: >
+          .\.sonar\scanner\dotnet-sonarscanner begin /n:"${{ env.PROJECT_NAME
+          }}" /k:"${{ env.PROJECT_KEY }}" /o:"santi995" /d:sonar.token="${{
+          env.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
 
+          msbuild WS_OLS_FEL.sln
+
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{
+          env.SONAR_TOKEN }}"
   Dependency_Review:
     runs-on: windows-2019
     needs: sonarcloud
@@ -139,13 +123,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: "Dependency Review"
+      - name: Dependency Review
         uses: actions/dependency-review-action@v4
         with:
-          fail-on-severity: "high"
-          deny-licenses: LGPL-2.0, BSD-2-Clause
+          fail-on-severity: high
+          deny-licenses: 'LGPL-2.0, BSD-2-Clause'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        base_ref: "main" # O la rama base que estés utilizando
-        head_ref: ${{ github.sha }} # La referencia de cabecera es el commit actual
-
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        base_ref: main
+        head_ref: '${{ github.sha }}'
