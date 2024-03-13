@@ -1,42 +1,42 @@
 name: cd
 
-
-on: 
+on:
   push:
     branches:
       - release
       - develop
-      
+
 jobs:
   build:
     runs-on: windows-2019
     name: build
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: setup-msbuild
-      uses: microsoft/setup-msbuild@v1.1
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1.1
 
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
-    
-    - name: Restore Packages
-      run: nuget restore Ws_OLS_FEL.sln
-    
-    - name: Build solution
-      run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.5
 
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        name: dist-files
-        path: |
-          Ws_OLS
+      - name: Restore Packages
+        run: nuget restore Ws_OLS_FEL.sln
+
+      - name: Build solution
+        run: msbuild Ws_OLS_FEL.sln -t:rebuild -property:Configuration=Release
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: dist-files
+          path: |
+            Ws_OLS
 
   DeployTest:
     environment: testing
     env:
+      ACTIONS_STEP_DEBUG: true
       IP_DEPLOY: ${{secrets.IP_DEPLOY}}
       USERNAME_DEPLOY: ${{secrets.USERNAME_DEPLOY}}
       PASSWORD_DEPLOY: ${{secrets.PASSWORD_DEPLOY}}
@@ -44,7 +44,7 @@ jobs:
       DIRECTORYDESTINY: ${{secrets.DIRECTORYDESTINY}}
       SITENAME: ${{secrets.SITENAME}}
       APPPOOLNAME: ${{secrets.APPPOOLNAME}}
-      USUARIO : ${{secrets.USUARIO}}
+      USUARIO: ${{secrets.USUARIO}}
       USERNAME: ${{secrets.USERNAME}}
       PASSWORDHEAD: ${{secrets.PASSWORDHEAD}}
       PASSWORD: ${{secrets.PASSWORD}}
@@ -65,11 +65,12 @@ jobs:
         run: |
           $ORIGIN = "dist-files"
           ./updateconfig.ps1 "$($ORIGIN)/web.config" ${{vars.TOKEN}} ${{vars.ENVIOJSON}} ${{vars.ENVIOJSONANULACION}} ${{vars.REVISALINEA}} ${{vars.INFOFACTURA}} ${{env.USUARIO}} ${{env.PASSWORDHEAD}} ${{env.USERNAME}} ${{env.PASSWORD}} ${{vars.IDCOMPANY}} ${{vars.AMBIENTE}} ${{env.IPES}} ${{env.IPES_SALA}}
-          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} ${{ env.SITENAME }} ${{ env.APPPOOLNAME }} 
-  
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} ${{ env.SITENAME }} ${{ env.APPPOOLNAME }}
+
   DeployProd:
     environment: prod
     env:
+      ACTIONS_STEP_DEBUG: true
       IP_DEPLOY: ${{secrets.IP_DEPLOY}}
       USERNAME_DEPLOY: ${{secrets.USERNAME_DEPLOY}}
       PASSWORD_DEPLOY: ${{secrets.PASSWORD_DEPLOY}}
@@ -77,7 +78,7 @@ jobs:
       DIRECTORYDESTINY: ${{secrets.DIRECTORYDESTINY}}
       SITENAME: ${{secrets.SITENAME}}
       APPPOOLNAME: ${{secrets.APPPOOLNAME}}
-      USUARIO : ${{secrets.USUARIO}}
+      USUARIO: ${{secrets.USUARIO}}
       USERNAME: ${{secrets.USERNAME}}
       PASSWORDHEAD: ${{secrets.PASSWORDHEAD}}
       PASSWORD: ${{secrets.PASSWORD}}
@@ -98,4 +99,4 @@ jobs:
         run: |
           $ORIGIN = "dist-files"
           ./updateconfig.ps1 "$($ORIGIN)/web.config" ${{vars.TOKEN}} ${{vars.ENVIOJSON}} ${{vars.ENVIOJSONANULACION}} ${{vars.REVISALINEA}} ${{vars.INFOFACTURA}} ${{env.USUARIO}} ${{env.PASSWORDHEAD}} ${{env.USERNAME}} ${{env.PASSWORD}} ${{vars.IDCOMPANY}} ${{vars.AMBIENTE}} ${{env.IPES}} ${{env.IPES_SALA}}
-          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} ${{ env.SITENAME }} ${{ env.APPPOOLNAME }}   
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} ${{ env.SITENAME }} ${{ env.APPPOOLNAME }}

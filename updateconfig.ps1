@@ -6,10 +6,10 @@ $RevisaLinea = $args[4].ToString()
 $InfoFactura = $args[5].ToString()
 $Usuario = $args[6].ToString()
 $PasswordHead = $args[7].ToString()
-$userName = $args[8].ToString()
-$password = $args[9].ToString()
-$idCompany = $args[10].ToString()
-$ambiente = $args[11].ToString()
+$UserName = $args[8].ToString()
+$Password = $args[9].ToString()
+$IdCompany = $args[10].ToString()
+$Ambiente = $args[11].ToString()
 $IPES = $args[12].ToString()
 $IPES_Sala = $args[13].ToString()
 
@@ -52,10 +52,10 @@ foreach($item in $doc.get_DocumentElement().appSettings.add)
 		"InfoFactura" {$item.value = $InfoFactura}
 		"Usuario" {$item.value = $Usuario}
 		"PasswordHead" {$item.value = $PasswordHead}
-		"userName" {$item.value = $userName}
-		"password" {$item.value = $password}
-		"idCompany" {$item.value = $idCompany}
-		"ambiente" {$item.value = $ambiente}
+		"userName" {$item.value = $UserName}
+		"password" {$item.value = $Password}
+		"idCompany" {$item.value = $IdCompany}
+		"ambiente" {$item.value = $Ambiente}
 		"IPES" {$item.value = $IPES}
 		"IPES_Sala" {$item.value = $IPES_Sala}
 	}        
