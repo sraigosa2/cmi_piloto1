@@ -130,22 +130,25 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
 
 
-  Dependency_Review:
-    runs-on: windows-2019
-    needs: sonarcloud
-    name: Dependency_Review
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: 'Dependency Review'
-        uses: actions/dependency-review-action@v4
-        with:
-          fail-on-severity: 'high'
-          deny-licenses: LGPL-2.0, BSD-2-Clause
-#          allow_licenses: Apache-2.0, BSD-3-Clause, MIT
+Dependency_Review:
+  runs-on: windows-2019
+  needs: sonarcloud
+  name: Dependency_Review
+  permissions:
+    contents: read
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: 'Dependency Review'
+      uses: actions/dependency-review-action@v4
+      with:
+        fail-on-severity: 'high'
+        deny-licenses: LGPL-2.0, BSD-2-Clause
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      base_ref: 'main'  # O la rama base que estés utilizando
+      head_ref: ${{ github.sha }}  # La referencia de cabecera es el commit actual
  
   artifact:
     needs: test
