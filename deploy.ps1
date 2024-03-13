@@ -59,7 +59,7 @@ Write-Host "Sitio detenido..."
 # Verificar la existencia de la carpeta de destino en el servidor remoto
 $resultQueryDestiny = Invoke-Command -Session $Session -ScriptBlock {
     param($Destination)
-    Get-ChildItem -Path $Destination -ErrorAction SilentlyContinue
+    Get-ChildItem -Path "C:\" -name $Destination -ErrorAction SilentlyContinue
 } -ArgumentList $Destination
 
 if ($resultQueryDestiny -eq $null) {
@@ -69,11 +69,11 @@ if ($resultQueryDestiny -eq $null) {
 # Eliminar todos los archivos y carpetas dentro del destino, excluyendo 'aspnet_client'
 Invoke-Command -Session $Session -ScriptBlock {
     param($Destination)
-    Get-ChildItem -Path $Destination | Where-Object { $_.Name -ne 'aspnet_client' } | Remove-Item -Recurse -Force
+    Get-ChildItem -Path "C:\" -name $Destination | Where-Object { $_.Name -ne 'aspnet_client' } | Remove-Item -Recurse -Force
 
     # Crear la carpeta de destino nuevamente si es necesario
     if (!(Test-Path $Destination)) {
-        New-Item -Path $Destination -ItemType Directory -Force
+        New-Item -Path "C:\" -name $Destination -ItemType Directory -Force
     }
 } -ArgumentList $Destination
 Write-Host "Eliminados archivos anteriores"
