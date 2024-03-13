@@ -33,7 +33,6 @@ $Session = New-PSSession -ComputerName $IP_DEPLOY -Credential $Credential
 
 
 $Destination = "($DIRECTORYDESTINY)"
-$OriginPath = Join-Path -Path $BASE -ChildPath $Origin
 Write-Output "Destination:" + $Destination
 
 Test-NetConnection $IP_DEPLOY -Port 5985
@@ -50,11 +49,12 @@ $resultQueryOrigin = Get-ChildItem -Path $Origin -ErrorAction SilentlyContinue
 Write-Output $resultQueryOrigin
 
 # Detener el sitio web en el servidor remoto
-Invoke-Command -Session $Session -ScriptBlock {
-    param($SiteName)
+$prueba = Invoke-Command -Session $Session -ScriptBlock {
+    param($AppPoolName)
     Import-Module WebAdministration
-    Stop-Website -Name $SiteName
+    Stop-Website -Name $AppPoolName
 } -ArgumentList $AppPoolName
+
 Write-Host "Sitio detenido..."
 # Verificar la existencia de la carpeta de destino en el servidor remoto
 $resultQueryDestiny = Invoke-Command -Session $Session -ScriptBlock {
@@ -81,9 +81,11 @@ Write-Host "Eliminados archivos anteriores"
 Copy-Item -Path "$Origin\*" -Destination $Destination -ToSession $Session -Recurse -Force
 Write-Host "Se copian archivos a ruta destino"
 # Iniciar el sitio web en el servidor remoto
+
 Invoke-Command -Session $Session -ScriptBlock {
-    param($SiteName)
+    param($AppPoolName)
     Import-Module WebAdministration
-    Start-Website -Name $SiteName
-} -ArgumentList $SiteName
+    Start-Website -Name $AppPoolName
+} -ArgumentList $AppPoolName
+
 Write-Host "Se inicia el IIS"
