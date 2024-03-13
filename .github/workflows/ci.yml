@@ -130,5 +130,5 @@ jobs:
           deny-licenses: 'LGPL-2.0, BSD-2-Clause'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        base_ref: main
-        head_ref: '${{ github.sha }}'
+          base_ref: main
+          head_ref: '${{ github.sha }}'
