@@ -40,9 +40,7 @@ jobs:
       IP_DEPLOY: ${{secrets.IP_DEPLOY}}
       USERNAME_DEPLOY: ${{secrets.USERNAME_DEPLOY}}
       PASSWORD_DEPLOY: ${{secrets.PASSWORD_DEPLOY}}
-      BASE: ${{secrets.BASE}}
       DIRECTORYDESTINY: ${{secrets.DIRECTORYDESTINY}}
-      SITENAME: ${{secrets.SITENAME}}
       APPPOOLNAME: ${{secrets.APPPOOLNAME}}
       USUARIO: ${{secrets.USUARIO}}
       USERNAME: ${{secrets.USERNAME}}
@@ -65,7 +63,7 @@ jobs:
         run: |
           $ORIGIN = "dist-files"
           ./updateconfig.ps1 "$($ORIGIN)/web.config" ${{vars.TOKEN}} ${{vars.ENVIOJSON}} ${{vars.ENVIOJSONANULACION}} ${{vars.REVISALINEA}} ${{vars.INFOFACTURA}} ${{env.USUARIO}} ${{env.PASSWORDHEAD}} ${{env.USERNAME}} ${{env.PASSWORD}} ${{vars.IDCOMPANY}} ${{vars.AMBIENTE}} ${{env.IPES}} ${{env.IPES_SALA}}
-          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} "${{ env.DIRECTORYDESTINY }}" "${{ env.SITENAME }}" "${{ env.APPPOOLNAME }}"
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} "${{ env.DIRECTORYDESTINY }}" "${{ env.APPPOOLNAME }}"
 
   DeployProd:
     environment: prod
@@ -74,9 +72,7 @@ jobs:
       IP_DEPLOY: ${{secrets.IP_DEPLOY}}
       USERNAME_DEPLOY: ${{secrets.USERNAME_DEPLOY}}
       PASSWORD_DEPLOY: ${{secrets.PASSWORD_DEPLOY}}
-      BASE: ${{secrets.BASE}}
       DIRECTORYDESTINY: ${{secrets.DIRECTORYDESTINY}}
-      SITENAME: ${{secrets.SITENAME}}
       APPPOOLNAME: ${{secrets.APPPOOLNAME}}
       USUARIO: ${{secrets.USUARIO}}
       USERNAME: ${{secrets.USERNAME}}
@@ -99,4 +95,4 @@ jobs:
         run: |
           $ORIGIN = "dist-files"
           ./updateconfig.ps1 "$($ORIGIN)/web.config" ${{vars.TOKEN}} ${{vars.ENVIOJSON}} ${{vars.ENVIOJSONANULACION}} ${{vars.REVISALINEA}} ${{vars.INFOFACTURA}} ${{env.USUARIO}} ${{env.PASSWORDHEAD}} ${{env.USERNAME}} ${{env.PASSWORD}} ${{vars.IDCOMPANY}} ${{vars.AMBIENTE}} ${{env.IPES}} ${{env.IPES_SALA}}
-          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} "${{ env.DIRECTORYDESTINY }}" "${{ env.SITENAME }}" "${{ env.APPPOOLNAME }}"
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} "${{ env.DIRECTORYDESTINY }}" "${{ env.APPPOOLNAME }}"

@@ -2,10 +2,8 @@ $IP_DEPLOY = $args[0]
 $Origin = $args[1]
 $USERNAME_DEPLOY = $args[2]
 $PASSWORD_DEPLOY = $args[3]
-$BASE = $args[4]
-$DIRECTORYDESTINY = $args[5]
-$SiteName = $args[6]
-$AppPoolName = $args[7]
+$DIRECTORYDESTINY = $args[4]
+$AppPoolName = $args[5]
 
 write-host "There are a total of $($args.count) arguments"
 
