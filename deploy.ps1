@@ -76,6 +76,7 @@ Invoke-Command -Session $Session -ScriptBlock {
         New-Item -Path $Destination -ItemType Directory -Force
     }
 } -ArgumentList $Destination
+
 Write-Host "Eliminados archivos anteriores"
 # Copiar el contenido de la carpeta local Ws_OLS en el servidor remoto
 Copy-Item -Path "$Origin\*" -Destination $Destination -ToSession $Session -Recurse -Force
