@@ -99,4 +99,4 @@ jobs:
         run: |
           $ORIGIN = "dist-files"
           ./updateconfig.ps1 "$($ORIGIN)/web.config" ${{vars.TOKEN}} ${{vars.ENVIOJSON}} ${{vars.ENVIOJSONANULACION}} ${{vars.REVISALINEA}} ${{vars.INFOFACTURA}} ${{env.USUARIO}} ${{env.PASSWORDHEAD}} ${{env.USERNAME}} ${{env.PASSWORD}} ${{vars.IDCOMPANY}} ${{vars.AMBIENTE}} ${{env.IPES}} ${{env.IPES_SALA}}
-          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} ${{ env.DIRECTORYDESTINY }} "${{ env.SITENAME }}" "${{ env.APPPOOLNAME }}"
+          ./deploy.ps1 ${{ env.IP_DEPLOY }} $ORIGIN ${{env.USERNAME_DEPLOY}} ${{env.PASSWORD_DEPLOY}} ${{ env.BASE }} "${{ env.DIRECTORYDESTINY }}" "${{ env.SITENAME }}" "${{ env.APPPOOLNAME }}"
