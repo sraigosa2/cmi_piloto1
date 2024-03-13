@@ -1,13 +1,9 @@
 name: ci
-'on':
-  push:
+on: 
+  pull_request:
     branches:
       - develop
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
+      - main
 env:
   PROJECT_NAME: '${{secrets.PROJECT_NAME}}'
   PROJECT_KEY: '${{secrets.PROJECT_KEY}}'
@@ -183,5 +179,3 @@ jobs:
           deny-licenses: 'LGPL-2.0, BSD-2-Clause'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          base_ref: ${{ github.ref }}
-          head_ref: ${{ github.sha }}
