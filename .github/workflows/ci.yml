@@ -1,4 +1,4 @@
-name: Build and SonarQube Analysis
+name: ci
 
 on:
   push:
@@ -10,10 +10,10 @@ on:
       - synchronize
       - reopened
 env:
-  PROJECT_NAME: santi995_cmi-alimentos-ws-ols-fel
-  PROJECT_KEY: santi995_cmi-alimentos-ws-ols-fel
+  PROJECT_NAME: ${{secrets.PROJECT_NAME}}
+  PROJECT_KEY: ${{secrets.PROJECT_KEY}}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  SONAR_URL: https://sonarcloud.io/
+  SONAR_URL: ${{secrets.SONAR_HOST_URL}}
   
 jobs:
   build:
@@ -71,7 +71,7 @@ jobs:
         if: ${{ always() }}
 
   sonarcloud:
-    needs: build
+    needs: test
     runs-on: windows-2019
     name: SonarCloud
     steps:
@@ -150,19 +150,3 @@ Dependency_Review:
       base_ref: 'main'  # O la rama base que estés utilizando
       head_ref: ${{ github.sha }}  # La referencia de cabecera es el commit actual
  
-  artifact:
-    needs: test
-    runs-on: windows-2019
-    name: deploy
-    steps:
-      - name: 'Checkout Repository'
-        uses: actions/checkout@v4
-        
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v4.1.2
-        with:
-          name: dist-files
-          
-      - name: OutputFiles
-        shell: powershell
-        run: Get-ChildItem -Path .\
