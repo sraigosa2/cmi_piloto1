@@ -49,7 +49,7 @@ $resultQueryOrigin = Get-ChildItem -Path $Origin -ErrorAction SilentlyContinue
 Write-Output $resultQueryOrigin
 
 # Detener el sitio web en el servidor remoto
-$prueba = Invoke-Command -Session $Session -ScriptBlock {
+Invoke-Command -Session $Session -ScriptBlock {
     param($AppPoolName)
     Import-Module WebAdministration
     Stop-Website -Name "$AppPoolName"
