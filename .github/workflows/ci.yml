@@ -165,10 +165,10 @@ jobs:
       with:
         category: "/language:csharp"
         # category: "/language:${{matrix.language}}"
-        
+
   Dependency_Review:
     runs-on: windows-2019
-    needs: sonarcloud
+    needs: CodeQL
     name: Dependency_Review
     permissions:
       contents: read
