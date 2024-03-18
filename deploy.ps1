@@ -129,7 +129,7 @@ if ($AppPools) {
 
     # Verificar si el sitio web existe en el servidor remoto
     Invoke-Command -Session $Session -ScriptBlock {
-        param($SiteName, $Destination)
+        param($SiteName, $DIRECTORYDESTINY)
     
         Import-Module WebAdministration
     
