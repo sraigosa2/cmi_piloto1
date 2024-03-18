@@ -56,9 +56,17 @@ foreach($item in $doc.get_DocumentElement().appSettings.add)
 		"password" {$item.value = $Password}
 		"idCompany" {$item.value = $IdCompany}
 		"ambiente" {$item.value = $Ambiente}
-		"IPES" {$item.value = $IPES}
-		"IPES_Sala" {$item.value = $IPES_Sala}
 	}        
+}
+# find the settings in connectionStrings
+foreach($item in $doc.get_DocumentElement().connectionStrings.add)
+{
+    Write-Output "$($item.name):$($item.connectionString)"
+    switch($item.name)
+    {
+        "IPES" {$item.connectionString = $IPES}
+        "IPES_Sala" {$item.connectionString = $IPES_Sala}
+    }        
 }
 
 # save the new file
